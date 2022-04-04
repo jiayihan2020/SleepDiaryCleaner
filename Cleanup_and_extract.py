@@ -86,7 +86,6 @@ def obtaining_BT():
     data_interest.loc[data_interest["Subject"].duplicated(), "Subject"] = ""
     cols = data_interest.columns[3:12]
     data_interest[cols] = data_interest[cols].apply(pd.to_datetime, format="%H:%M%S")
-    # print(data_interest["StartNap1"].apply(type))
     for column in data_interest.columns:
         if re.search(r"^Start*|End*", column):
             data_interest[column] = pd.to_datetime(data_interest[column]).dt.strftime(
