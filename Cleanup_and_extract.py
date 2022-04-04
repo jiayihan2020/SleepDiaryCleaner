@@ -2,6 +2,7 @@ import pandas as pd
 import pyinputplus
 import re
 import datetime as dt
+import subprocess
 
 
 def opening_csv(filename):
@@ -91,7 +92,18 @@ def obtaining_BT():
                 "%I:%M %p"
             )
 
-    data_interest.to_csv("BT mine2.csv", index=False, encoding="utf-8")
+    data_interest.to_csv(
+        "./BT mine2.csv",
+        index=False,
+        encoding="utf-8",
+    )
+    subprocess.call(
+        [
+            "C:/Program Files/R/R-4.1.3/bin/Rscript.exe",
+            "--vanilla",
+            "./Step1_Cleaning modified.R",
+        ]
+    )
     return None
 
 
