@@ -3,7 +3,6 @@ import re
 import subprocess
 
 import pandas as pd
-import pyinputplus
 
 
 def opening_csv(filename):
@@ -54,13 +53,6 @@ def obtaining_WT():
     )
 
     final_data.sort_values(by="Subject", inplace=True)
-    strip_SIT = pyinputplus.inputStr(
-        "Do you wish to change the subject code from SITXXX to SXXX (e.g SIT001 to S001)? (Y/N)"
-    )
-    if strip_SIT.casefold() == "y":
-        final_data["Subject"] = final_data["Subject"].replace(
-            to_replace=r"SIT", value="S", regex=True
-        )
     print("Exporting to csv format...")
     final_data.to_csv(
         "WT_TImestamp_23_March_2022 part 2.csv", index=False, encoding="utf-8"
