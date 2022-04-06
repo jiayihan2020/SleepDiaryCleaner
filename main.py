@@ -1,7 +1,7 @@
 import pkg_resources
 import sys
 import subprocess
-import Cleanup_and_extract as ce
+import SleepDiaryCleaner as ce
 
 try:
     import pyinputplus
