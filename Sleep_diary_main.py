@@ -1,3 +1,4 @@
+from time import sleep
 import Cleanup_and_extract as ce
 import pkg_resources
 import sys
@@ -41,3 +42,15 @@ user_select = pyinputplus.inputMenu(
     numbered=True,
     prompt="Please indicate using corresponding number what kind of data you wish to extract from sleep diary:\n",
 )
+if user_select == "Wake-Time":
+    ce.obtaining_WT(sleep_diary_file_input)
+elif user_select == "Bed-Time Timestamp":
+    if sys.platform.startswith('win32')
+        ce.obtaining_BT(sleep_diary_file_input, rscript_windows)
+    elif sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
+        ce.obtaining_BT(sleep_diary_file_input, rscript_linux_macOS)
+else:
+    ce.obtaining_WT(ce.obtaining_WT(sleep_diary_file_input))
+    ce.obtaining_BT(sleep_diary_file_input)
+
+print('All done!')
