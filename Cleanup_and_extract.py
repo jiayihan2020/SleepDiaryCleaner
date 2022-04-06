@@ -101,6 +101,3 @@ def obtaining_telegram():
     """Obtain the telegram timings for each person
     Return: output a cleaned csv file for telegram timing."""
     pass
-
-
-obtaining_WT()
