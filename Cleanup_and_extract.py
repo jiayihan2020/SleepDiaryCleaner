@@ -1,8 +1,16 @@
 import datetime as dt
 import re
 import subprocess
+import sys
 
-import pandas as pd
+try:
+    import pandas as pd
+except ModuleNotFoundError:
+    print('pandas package not found! Installing pandas...')
+    missing = {'pandas'}
+    launch_python = sys.executable
+    subprocess.check_call([launch_python, '-m','pip', 'install', *missing])
+    print('Missing package installed.')
 
 pd.options.mode.chained_assignment = None
 
@@ -125,7 +133,7 @@ def obtaining_BT(sleep_diary_csv, R_Script_location):
             [
                 R_Script_location,
                 "--vanilla",
-                "./Step1_Cleaning modified.R",
+                "Step1_Cleaning modified.R",
             ]
         )
     except FileNotFoundError:

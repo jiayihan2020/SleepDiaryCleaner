@@ -1,18 +1,20 @@
-import Cleanup_and_extract as ce
 import pkg_resources
 import sys
 import subprocess
+import Cleanup_and_extract as ce
 
 try:
     import pyinputplus
-    import pandas as pd
 except ModuleNotFoundError:
-    print("Pandas and pyinputplus modules not found. Installing...")
-    required_packages = {"pyinputplus", "pandas"}
+    required_packages = {"pyinputplus"}
     installed = {pkg.key for pkg in pkg_resources.working_set}
-    missing = installed - required_packages
+    missing = required_packages - installed
+    print('pyinputplus not installed. Installing missing package...')
     launch_python = sys.executable
-    subprocess.call([launch_python, "-m", "pip", "install", *missing])
+    subprocess.check_call([launch_python, "-m", "pip", "install", *missing])
+    print('pyinputplus installed successfully.')
+
+
 
 rscript_windows = "C:/Program Files/R/R-4.1.3/bin/Rscript.exe"  # change R-4.1.3 to the version of R you are using. You can get it from visiting the C:\Program Files\R\
 rscript_linux_macOS = "usr/bin/Rscript"
@@ -46,10 +48,15 @@ if user_select == "Wake-Time Timestamp":
     ce.obtaining_WT(sleep_diary_file_input)
 elif user_select == "Bed-Time Timestamp":
     if sys.platform.startswith("win32"):
+        print('windows...')
         print("Now obtaining Bed-Time data...")
         ce.obtaining_BT(sleep_diary_file_input, rscript_windows)
-    elif sys.platform.startswith("linux") or sys.platform.startswith("darwin"):
-        ce.obtaining_BT(sleep_diary_file_input, rscript_linux_macOS)
+    elif sys.platform.startswith('linux') or sys.platform.startswith('darwin')':
+        user_warning = pyinputplus.inputYesNo(prompt="WARNING: Automatically calling the RScript function to generate the BT Timestamp may not work correctly! If you encountered an error, please run the Step1_Cleaning modified.R manually. Do you wish to proceed? (Y/N):\n")
+        if user_warning == 'yes':
+            ce.obtaining_BT(sleep_diary_file_input, rscript_linux_macOS)
+        else:
+            print('Please use the Step1_Cleaning modified.R manually.')
 else:
     print("Now obtaining Wake-TIme data...")
     ce.obtaining_WT(sleep_diary_file_input)
