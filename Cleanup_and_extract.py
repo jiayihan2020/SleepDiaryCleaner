@@ -9,9 +9,7 @@ def opening_csv(filename):
     """Opens the csv in question and clean up the columns.
     Return: Pandas's dataframe
     """
-    df = pd.read_csv(
-        filename, encoding="cp1252", skiprows=1
-    )  # Ignore first row of csv file.
+    df = pd.read_csv(filename, skiprows=1)  # Ignore first row of csv file.
     pd.set_option("display.max_columns", 59)
     df.drop(index=0, inplace=True)  # Ignore the third row of the csv file
     df.columns = df.columns.str.replace("\n", "")  # Strip away unnecessary newlines
@@ -32,32 +30,32 @@ def obtaining_WT():
     data_interest = treated_data.filter(
         regex=re.compile(r"Subject|bedtime|^4.|^5.", re.IGNORECASE)
     )
-    data_interest["WTSelectedTime"] = data_interest["4. Date at wake-time"]
-    data_interest["sleep"] = (
-        data_interest["1. Date at bedtime"]
-        + " "
-        + data_interest["2. Bedtime(24 hour format, e.g. 16:35) - HH:MM"]
-    )
-    data_interest["wake"] = (
-        data_interest["4. Date at wake-time"]
-        + " "
-        + data_interest["5. Final wake time (24 hour format, e.g. 16:35) - HH:MM"]
-    )
-    final_data = data_interest.drop(
+
+    data_interest["sleep"], data_interest["wake"] = [
+        (
+            data_interest["1. Date at bedtime"]
+            + " "
+            + data_interest["2. Bedtime(24 hour format, e.g. 16:35) - HH:MM"]
+        ),
+        (
+            data_interest["4. Date at wake-time"]
+            + " "
+            + data_interest["5. Final wake time (24 hour format, e.g. 16:35) - HH:MM"]
+        ),
+    ]
+    data_interest = data_interest.rename(columns={"4. Date at wake-time": "WTSelected"})
+    data_interest.drop(
         columns=[
             "1. Date at bedtime",
             "2. Bedtime(24 hour format, e.g. 16:35) - HH:MM",
-            "4. Date at wake-time",
             "5. Final wake time (24 hour format, e.g. 16:35) - HH:MM",
-        ]
+        ],
+        inplace=True,
     )
+    data_interest.sort_values(by="Subject", inplace=True)
 
-    final_data.sort_values(by="Subject", inplace=True)
-    print("Exporting to csv format...")
-    final_data.to_csv(
-        "WT_TImestamp_23_March_2022 part 2.csv", index=False, encoding="utf-8"
-    )
-    print("Done!")
+    data_interest.to_csv("./WT mine 2.csv", index=False, encoding="utf-8")
+
     return None
 
 
@@ -105,4 +103,4 @@ def obtaining_telegram():
     pass
 
 
-obtaining_BT()
+obtaining_WT()
