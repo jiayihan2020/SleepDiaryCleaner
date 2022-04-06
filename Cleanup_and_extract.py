@@ -24,7 +24,7 @@ def opening_csv(filename):
     return df
 
 
-def obtaining_WT():
+def obtaining_WT(sleep_diary_csv):
     """Obtain the WT timings from each person
     Return: outputs a cleaned csv file for WT.
     """
@@ -61,7 +61,7 @@ def obtaining_WT():
     return None
 
 
-def obtaining_BT():
+def obtaining_BT(sleep_diary):
     """Obtains the BT timings for each person
     Returns: output a cleaned csv file for BT."""
     treated_data = opening_csv("SIT Diary_March 23, 2022_23.40.csv")
@@ -103,6 +103,3 @@ def obtaining_telegram():
     """Obtain the telegram timings for each person
     Return: output a cleaned csv file for telegram timing."""
     pass
-
-
-obtaining_WT()
