@@ -61,7 +61,7 @@ def obtaining_WT(sleep_diary_csv):
     return None
 
 
-def obtaining_BT(sleep_diary):
+def obtaining_BT(sleep_diary, R_Script_location):
     """Obtains the BT timings for each person
     Returns: output a cleaned csv file for BT."""
     treated_data = opening_csv("SIT Diary_March 23, 2022_23.40.csv")
@@ -91,7 +91,7 @@ def obtaining_BT(sleep_diary):
     )
     subprocess.call(
         [
-            "C:/Program Files/R/R-4.1.3/bin/Rscript.exe",
+            R_Script_location,
             "--vanilla",
             "./Step1_Cleaning modified.R",
         ]
