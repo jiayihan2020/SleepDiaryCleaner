@@ -4,6 +4,8 @@ import subprocess
 
 import pandas as pd
 
+pd.options.mode.chained_assignment = None
+
 
 def opening_csv(filename):
     """Opens the csv in question and clean up the columns.
@@ -101,3 +103,6 @@ def obtaining_telegram():
     """Obtain the telegram timings for each person
     Return: output a cleaned csv file for telegram timing."""
     pass
+
+
+obtaining_WT()
