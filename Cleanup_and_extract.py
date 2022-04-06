@@ -11,7 +11,12 @@ def opening_csv(filename):
     """Opens the csv in question and clean up the columns.
     Return: Pandas's dataframe
     """
-    df = pd.read_csv(filename, skiprows=1)  # Ignore first row of csv file.
+    try:
+        df = pd.read_csv(filename, skiprows=1)  # Ignore first row of csv file.
+    except FileNotFoundError:
+        print(
+            "Sleep diary csv not found. Please check Sleep_diary_main.py to see if you have input the correct filepath."
+        )
     pd.set_option("display.max_columns", 59)
     df.drop(index=0, inplace=True)  # Ignore the third row of the csv file
     df.columns = df.columns.str.replace("\n", "")  # Strip away unnecessary newlines
@@ -28,7 +33,7 @@ def obtaining_WT(sleep_diary_csv):
     """Obtain the WT timings from each person
     Return: outputs a cleaned csv file for WT.
     """
-    treated_data = opening_csv("SIT Diary_March 23, 2022_23.40.csv")
+    treated_data = opening_csv(sleep_diary_csv)
     data_interest = treated_data.filter(
         regex=re.compile(r"Subject|bedtime|^4.|^5.", re.IGNORECASE)
     )
@@ -61,10 +66,10 @@ def obtaining_WT(sleep_diary_csv):
     return None
 
 
-def obtaining_BT(sleep_diary, R_Script_location):
+def obtaining_BT(sleep_diary_csv, R_Script_location):
     """Obtains the BT timings for each person
     Returns: output a cleaned csv file for BT."""
-    treated_data = opening_csv("SIT Diary_March 23, 2022_23.40.csv")
+    treated_data = opening_csv(sleep_diary_csv)
     data_interest = treated_data.filter(
         regex=re.compile(r"^Subject|^1.|^7a|^7b", re.IGNORECASE)
     )
@@ -89,17 +94,16 @@ def obtaining_BT(sleep_diary, R_Script_location):
         index=False,
         encoding="utf-8",
     )
-    subprocess.call(
-        [
-            R_Script_location,
-            "--vanilla",
-            "./Step1_Cleaning modified.R",
-        ]
-    )
+    try:
+        subprocess.call(
+            [
+                R_Script_location,
+                "--vanilla",
+                "./Step1_Cleaning modified.R",
+            ]
+        )
+    except FileNotFoundError:
+        print(
+            "Either Rscript or Step1_Cleaning modified.R could not be found in the specified directory. Please check Sleep_diary_main.py for the directory input. Alternatively, you may run the Step1_Cleaning modified.R manually"
+        )
     return None
-
-
-def obtaining_telegram():
-    """Obtain the telegram timings for each person
-    Return: output a cleaned csv file for telegram timing."""
-    pass

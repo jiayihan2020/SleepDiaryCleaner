@@ -51,7 +51,7 @@ elif user_select == "Bed-Time Timestamp":
         ce.obtaining_BT(sleep_diary_file_input, rscript_linux_macOS)
 else:
     ce.obtaining_WT(ce.obtaining_WT(sleep_diary_file_input))
-    if sys.platform.startswith('win32')
+    if sys.platform.startswith('win32'):
         ce.obtaining_BT(sleep_diary_file_input, rscript_windows)
     elif sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
         ce.obtaining_BT(sleep_diary_file_input, rscript_linux_macOS)
