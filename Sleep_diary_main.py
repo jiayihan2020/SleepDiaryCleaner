@@ -42,17 +42,20 @@ user_select = pyinputplus.inputMenu(
     prompt="Please indicate using corresponding number what kind of data you wish to extract from sleep diary:\n",
 )
 if user_select == "Wake-Time Timestamp":
+    print("Now obtaining Wake-TIme data...")
     ce.obtaining_WT(sleep_diary_file_input)
 elif user_select == "Bed-Time Timestamp":
     if sys.platform.startswith("win32"):
+        print("Now obtaining Bed-Time data...")
         ce.obtaining_BT(sleep_diary_file_input, rscript_windows)
     elif sys.platform.startswith("linux") or sys.platform.startswith("darwin"):
         ce.obtaining_BT(sleep_diary_file_input, rscript_linux_macOS)
 else:
+    print("Now obtaining Wake-TIme data...")
     ce.obtaining_WT(sleep_diary_file_input)
     if sys.platform.startswith("win32"):
+        print("Now obtaining Bed-Time data...")
         ce.obtaining_BT(sleep_diary_file_input, rscript_windows)
     elif sys.platform.startswith("linux") or sys.platform.startswith("darwin"):
+        print("Now obtaining Bed-Time data...")
         ce.obtaining_BT(sleep_diary_file_input, rscript_linux_macOS)
-
-print("All done!")

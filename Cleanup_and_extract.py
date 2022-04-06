@@ -38,12 +38,14 @@ def obtaining_WT(sleep_diary_csv):
     """Obtain the WT timings from each person
     Return: outputs a cleaned csv file for WT.
     """
+    print("Opening file...")
     treated_data = opening_csv(sleep_diary_csv)
     # Filter unneeded columns using regex
     data_interest = treated_data.filter(
         regex=re.compile(r"Subject|bedtime|^4.|^5.", re.IGNORECASE)
     )
     # Join date column and time column together.
+    print("Analysing....")
     data_interest["sleep"], data_interest["wake"] = [
         (
             data_interest["1. Date at bedtime"]
@@ -69,8 +71,10 @@ def obtaining_WT(sleep_diary_csv):
 
     # Sort dataframe by Subject column.
     data_interest.sort_values(by="Subject", inplace=True)
+    print("Obtained Wake time data. Exporting to csv...")
 
     data_interest.to_csv("./WT mine 2.csv", index=False, encoding="utf-8")
+    print("Done!")
 
     return None
 
@@ -78,8 +82,10 @@ def obtaining_WT(sleep_diary_csv):
 def obtaining_BT(sleep_diary_csv, R_Script_location):
     """Obtains the BT timings for each person
     Returns: output a cleaned csv file for BT."""
+    print("Opening Sleep diary csv...")
     treated_data = opening_csv(sleep_diary_csv)
     # filter unneeded columns using regex
+    print("Analysing")
     data_interest = treated_data.filter(
         regex=re.compile(r"^Subject|^1.|^7a|^7b", re.IGNORECASE)
     )
@@ -110,7 +116,10 @@ def obtaining_BT(sleep_diary_csv, R_Script_location):
         index=False,
         encoding="utf-8",
     )
+    print("Bed Time raw data obtained. Exporting to csv...")
+
     # Call upon Modified R script to clean the resulting csv to the desired format.
+    print("Calling R Script to further format resulting csv...")
     try:
         subprocess.call(
             [
@@ -123,4 +132,6 @@ def obtaining_BT(sleep_diary_csv, R_Script_location):
         print(
             "Either Rscript or Step1_Cleaning modified.R could not be found in the specified directory. Please check Sleep_diary_main.py for the directory input or check if Rstudio is installed. Alternatively, you may run the Step1_Cleaning modified.R manually"
         )
+    else:
+        print("Done!")
     return None
