@@ -6,11 +6,13 @@ import sys
 try:
     import pandas as pd
 except ModuleNotFoundError:
-    print('pandas package not found! Installing pandas...')
-    missing = {'pandas'}
+    print("pandas package not found! Installing pandas...")
+    missing = {"pandas"}
     launch_python = sys.executable
-    subprocess.check_call([launch_python, '-m','pip', 'install', *missing])
-    print('Missing package installed.')
+    subprocess.check_call([launch_python, "-m", "pip", "install", *missing])
+    print(
+        "Missing package installed. It is recommended to restart python to apply the updates to the local Python library."
+    )
 
 pd.options.mode.chained_assignment = None
 
