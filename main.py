@@ -27,7 +27,7 @@ rscript_linux_macOS = "usr/bin/Rscript"
 working_directory = "./"
 
 # Input your sleep diary filename here
-sleep_diary_file_input = working_directory + "SIT Diary_March 23, 2022_23.40.csv"
+sleep_diary_file_input = working_directory + "SIT Diary_March 23, 2022_23.40 modded.csv"
 
 ####### ------ Cleaning and outputting of data ------ #######
 

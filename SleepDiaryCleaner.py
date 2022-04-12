@@ -41,6 +41,7 @@ def opening_csv(filename):
     df = df.rename(columns={"Subject Code (e.g. SITXXX)": "Subject"})
     # Standardise sit to SIT
     df["Subject"] = df["Subject"].str.upper()
+    df["Subject"] = df["Subject"].str.replace("IT", "")
     return df
 
 
@@ -52,44 +53,107 @@ def obtaining_WT(sleep_diary_csv):
     treated_data = opening_csv(sleep_diary_csv)
     # Filter unneeded columns using regex
     data_interest = treated_data.filter(
-        regex=re.compile(r"Subject|bedtime|^4.|^5.", re.IGNORECASE)
+        regex=re.compile(r"Subject|^2.|^4.|^5.", re.IGNORECASE)
     )
-    # Join date column and time column together.
-    print("Analysing....")
-    data_interest["sleep"], data_interest["wake"] = [
-        (
-            data_interest["1. Date at bedtime"]
-            + " "
-            + data_interest["2. Bedtime(24 hour format, e.g. 16:35) - HH:MM"]
-        ),
-        (
-            data_interest["4. Date at wake-time"]
-            + " "
-            + data_interest["5. Final wake time (24 hour format, e.g. 16:35) - HH:MM"]
-        ),
+    data_interest["BedtimeAMPM"] = data_interest[
+        "2. Bedtime(24 hour format, e.g. 16:35) - HH:MM"
     ]
-    # Renaming date at wake-time column.
-    data_interest = data_interest.rename(columns={"4. Date at wake-time": "WTSelected"})
-    data_interest.drop(
-        columns=[
-            "1. Date at bedtime",
-            "2. Bedtime(24 hour format, e.g. 16:35) - HH:MM",
-            "5. Final wake time (24 hour format, e.g. 16:35) - HH:MM",
-        ],
+    data_interest["WakeTimeAMPM"] = data_interest[
+        "5. Final wake time (24 hour format, e.g. 16:35) - HH:MM"
+    ]
+    data_interest["BedtimeAMPM"].apply(pd.to_datetime)
+    data_interest["WakeTimeAMPM"].apply(pd.to_datetime)
+    data_interest["BedtimeAMPM"] = pd.to_datetime(
+        data_interest["BedtimeAMPM"]
+    ).dt.strftime("%p")
+    data_interest["WakeTimeAMPM"] = pd.to_datetime(
+        data_interest["WakeTimeAMPM"]
+    ).dt.strftime("%p")
+
+    data_interest.rename(
+        columns={
+            "4. Date at wake-time": "WTSelectedDate",
+            "2. Bedtime(24 hour format, e.g. 16:35) - HH:MM": "Bedtime",
+            "5. Final wake time (24 hour format, e.g. 16:35) - HH:MM": "WakeTime",
+        },
         inplace=True,
     )
+    data_interest["Bedtime"].apply(pd.to_datetime)
+    data_interest["Bedtime"] = pd.to_datetime(data_interest["Bedtime"]).dt.strftime(
+        "%I:%M"
+    )
+    data_interest["WakeTime"].apply(pd.to_datetime)
+    data_interest["WakeTime"] = pd.to_datetime(data_interest["Bedtime"]).dt.strftime(
+        "%I:%M"
+    )
+
+    data_interest = data_interest[
+        [
+            "Subject",
+            "WTSelectedDate",
+            "Bedtime",
+            "BedtimeAMPM",
+            "WakeTime",
+            "WakeTimeAMPM",
+        ]
+    ]
+    data_interest.sort_values(by="Subject", inplace=True)
+
+    # data_interest = data_interest[['Subject', "1. Date at bedtime"]]
+
+    # data_interest = data_interest.insert(3, "WakeTimeAMPM", "")
+
+    # Join date column and time column together.
+    # print("Analysing....")
+    # data_interest["sleep"], data_interest["wake"] = [
+    #     (
+    #         data_interest["1. Date at bedtime"]
+    #         + " "
+    #         + data_interest["2. Bedtime(24 hour format, e.g. 16:35) - HH:MM"]
+    #     ),
+    #     (
+    #         data_interest["4. Date at wake-time"]
+    #         + " "
+    #         + data_interest["5. Final wake time (24 hour format, e.g. 16:35) - HH:MM"]
+    #     ),
+    # ]
+
+    # # Renaming date at wake-time column.
+    # data_interest = data_interest.rename(
+    #     columns={"4. Date at wake-time": "WTSelectedDate"}
+    # )
+
+    # data_interest.drop(
+    #     columns=[
+    #         "1. Date at bedtime",
+    #         "2. Bedtime(24 hour format, e.g. 16:35) - HH:MM",
+    #         "5. Final wake time (24 hour format, e.g. 16:35) - HH:MM",
+    #     ],
+    #     inplace=True,
+    # )
+    # data_interest["WTSelectedDate"] = data_interest["WTSelectedDate"].apply(
+    #     pd.to_datetime, format="%d/%m/%Y"
+    # )
+    # data_interest[["sleep", "wake"]] = data_interest[["sleep", "wake"]].apply(
+    #     pd.to_datetime, format="%d/%m/%Y %H:%M"
+    # )
+    # data_interest["WTSelectedDate"] = pd.to_datetime(
+    #     data_interest["WTSelectedDate"]
+    # ).dt.strftime("%Y-%m-%d")
+    # data_interest[["sleep", "wake"]] = pd.to_datetime(
+    #     data_interest[["sleep", "wake"]]
+    # ).dt.strtime("%Y-%m-%d %H:%m:%S")
 
     # Sort dataframe by Subject column.
-    data_interest.sort_values(by="Subject", inplace=True)
-    print("Obtained Wake time data. Exporting to csv...")
+    # data_interest.sort_values(by="Subject", inplace=True)
+    # print("Obtained Wake time data. Exporting to csv...")
 
     data_interest.to_csv("./WT mine 2.csv", index=False, encoding="utf-8")
-    print("Done!")
 
     return None
 
 
-def obtaining_BT(sleep_diary_csv, R_Script_location):
+def obtaining_BT(sleep_diary_csv):
     """Obtains the BT timings for each person
     Returns: output a cleaned csv file for BT."""
     print("Opening Sleep diary csv...")
@@ -129,11 +193,15 @@ def obtaining_BT(sleep_diary_csv, R_Script_location):
     print("Bed Time raw data obtained. Exporting to csv...")
 
     # Call upon Modified R script to clean the resulting csv to the desired format.
+    return None
+
+
+def calling_RScript(R_Script_location):
     print("Calling R Script to further format resulting csv...")
     try:
-        subprocess.call(
+        subprocess.run(
             [
-                R_Script_location,
+                "C:/Program Files/R/R-4.1.3/bin/Rscript.exe",
                 "--vanilla",
                 "Step1_Cleaning modified.R",
             ]
@@ -144,4 +212,12 @@ def obtaining_BT(sleep_diary_csv, R_Script_location):
         )
     else:
         print("Done!")
-    return None
+
+
+obtaining_BT(
+    "C:/Users/hanji/Documents/LTLB sleep diary/SIT Diary_March 23, 2022_23.40 modded.csv"
+)
+obtaining_WT(
+    "C:/Users/hanji/Documents/LTLB sleep diary/SIT Diary_March 23, 2022_23.40 modded.csv"
+)
+# calling_RScript("C:/Users/hanji/Documents/LTLB sleep diary/Step1_Cleaning modified.R")
