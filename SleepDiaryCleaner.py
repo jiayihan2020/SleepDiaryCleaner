@@ -99,55 +99,6 @@ def obtaining_WT(sleep_diary_csv):
     ]
     data_interest.sort_values(by="Subject", inplace=True)
 
-    # data_interest = data_interest[['Subject', "1. Date at bedtime"]]
-
-    # data_interest = data_interest.insert(3, "WakeTimeAMPM", "")
-
-    # Join date column and time column together.
-    # print("Analysing....")
-    # data_interest["sleep"], data_interest["wake"] = [
-    #     (
-    #         data_interest["1. Date at bedtime"]
-    #         + " "
-    #         + data_interest["2. Bedtime(24 hour format, e.g. 16:35) - HH:MM"]
-    #     ),
-    #     (
-    #         data_interest["4. Date at wake-time"]
-    #         + " "
-    #         + data_interest["5. Final wake time (24 hour format, e.g. 16:35) - HH:MM"]
-    #     ),
-    # ]
-
-    # # Renaming date at wake-time column.
-    # data_interest = data_interest.rename(
-    #     columns={"4. Date at wake-time": "WTSelectedDate"}
-    # )
-
-    # data_interest.drop(
-    #     columns=[
-    #         "1. Date at bedtime",
-    #         "2. Bedtime(24 hour format, e.g. 16:35) - HH:MM",
-    #         "5. Final wake time (24 hour format, e.g. 16:35) - HH:MM",
-    #     ],
-    #     inplace=True,
-    # )
-    # data_interest["WTSelectedDate"] = data_interest["WTSelectedDate"].apply(
-    #     pd.to_datetime, format="%d/%m/%Y"
-    # )
-    # data_interest[["sleep", "wake"]] = data_interest[["sleep", "wake"]].apply(
-    #     pd.to_datetime, format="%d/%m/%Y %H:%M"
-    # )
-    # data_interest["WTSelectedDate"] = pd.to_datetime(
-    #     data_interest["WTSelectedDate"]
-    # ).dt.strftime("%Y-%m-%d")
-    # data_interest[["sleep", "wake"]] = pd.to_datetime(
-    #     data_interest[["sleep", "wake"]]
-    # ).dt.strtime("%Y-%m-%d %H:%m:%S")
-
-    # Sort dataframe by Subject column.
-    # data_interest.sort_values(by="Subject", inplace=True)
-    # print("Obtained Wake time data. Exporting to csv...")
-
     data_interest.to_csv("./WT mine 2.csv", index=False, encoding="utf-8")
 
     return None
@@ -192,7 +143,6 @@ def obtaining_BT(sleep_diary_csv):
     )
     print("Bed Time raw data obtained. Exporting to csv...")
 
-    # Call upon Modified R script to clean the resulting csv to the desired format.
     return None
 
 
@@ -220,4 +170,4 @@ obtaining_BT(
 obtaining_WT(
     "C:/Users/hanji/Documents/LTLB sleep diary/SIT Diary_March 23, 2022_23.40 modded.csv"
 )
-# calling_RScript("C:/Users/hanji/Documents/LTLB sleep diary/Step1_Cleaning modified.R")
+calling_RScript("C:/Users/hanji/Documents/LTLB sleep diary/Step1_Cleaning modified.R")
