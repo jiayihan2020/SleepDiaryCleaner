@@ -41,7 +41,6 @@ def opening_csv(filename):
     df = df.rename(columns={"Subject Code (e.g. SITXXX)": "Subject"})
     # Standardise sit to SIT
     df["Subject"] = df["Subject"].str.upper()
-    df["Subject"] = df["Subject"].str.replace("IT", "")
     return df
 
 
