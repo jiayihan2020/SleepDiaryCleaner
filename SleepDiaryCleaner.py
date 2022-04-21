@@ -97,6 +97,7 @@ def obtaining_WT(sleep_diary_csv):
         ]
     ]
     data_interest.sort_values(by="Subject", inplace=True)
+    print("Waketime data generated. Exporting to CSV...")
 
     data_interest.to_csv("./WT mine 2.csv", index=False, encoding="utf-8")
 
@@ -145,28 +146,37 @@ def obtaining_BT(sleep_diary_csv):
     return None
 
 
-def calling_RScript(R_Script_location):
+def calling_RScript(R_cleaning_script, *args):
     print("Calling R Script to further format resulting csv...")
-    try:
-        subprocess.run(
-            [
-                "C:/Program Files/R/R-4.1.3/bin/Rscript.exe",
-                "--vanilla",
-                "Step1_Cleaning modified.R",
-            ]
-        )
-    except FileNotFoundError:
-        print(
-            "Either Rscript or Step1_Cleaning modified.R could not be found in the specified directory. Please check Sleep_diary_main.py for the directory input or check if Rstudio is installed. Alternatively, you may run the Step1_Cleaning modified.R manually"
-        )
+    error_message = "Either Rscript or Step1_Cleaning modified.R could not be found in the specified directory. Please check Sleep_diary_main.py for the directory input or check if Rstudio is installed. Alternatively, you may run the Step1_Cleaning modified.R manually using RStudio."
+    if sys.platform.startswith("win32"):
+        try:
+            subprocess.run(
+                [
+                    args[0],
+                    "--vanilla",
+                    R_cleaning_script,
+                ]
+            )
+        except FileNotFoundError:
+            print(error_message)
+        else:
+            print("Done!")
+    elif sys.platform.startswith("darwin") or sys.platform.startswith("linux"):
+        try:
+            subprocess.run(
+                [
+                    args[1],
+                    "--vanilla",
+                    R_cleaning_script,
+                ]
+            )
+        except FileNotFoundError:
+            print(error_message)
+        else:
+            print("Done!")
     else:
-        print("Done!")
-
-
-obtaining_BT(
-    "C:/Users/hanji/Documents/LTLB sleep diary/SIT Diary_March 23, 2022_23.40 modded.csv"
-)
-obtaining_WT(
-    "C:/Users/hanji/Documents/LTLB sleep diary/SIT Diary_March 23, 2022_23.40 modded.csv"
-)
-calling_RScript("C:/Users/hanji/Documents/LTLB sleep diary/Step1_Cleaning modified.R")
+        print(
+            "Unknown operating system detected. Please run the R script manually to clean the file."
+        )
+    return None
