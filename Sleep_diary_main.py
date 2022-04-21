@@ -30,7 +30,7 @@ working_directory = "./"
 sleep_diary_file_input = working_directory + "SIT Diary_March 23, 2022_23.40 modded.csv"
 
 # Input the location for the Step1_Cleaning modified.R script
-R_csv_cleaning = "Step1_Cleaning modified.R"
+R_csv_cleaning = working_directory + "Step1_Cleaning modified.R"
 
 
 ####### ------ Cleaning and outputting of data ------ #######
