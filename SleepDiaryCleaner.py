@@ -1,4 +1,3 @@
-import datetime as dt
 import re
 import subprocess
 import sys
@@ -13,8 +12,8 @@ except ModuleNotFoundError:
     print(
         "Missing package installed. It is recommended to restart python to apply the updates to the local Python library."
     )
-
-pd.options.mode.chained_assignment = None
+else:
+    pd.options.mode.chained_assignment = None
 
 
 def opening_csv(filename):
@@ -28,19 +27,20 @@ def opening_csv(filename):
         print(
             "Sleep diary csv not found. Please check Sleep_diary_main.py to see if you have input the correct filepath."
         )
-    pd.set_option("display.max_columns", 59)
-    # Ignore the third row of the csv file
-    df.drop(index=0, inplace=True)
-    # Strip away unnecessary newlines
-    df.columns = df.columns.str.replace("\n", "")
-    # Removes the Qualtrics gibberish using regex
-    df.columns = df.columns.str.replace(r"Qualtrics\.Survey.*", "", regex=True)
-    # Removes unneeded white spaces.
-    df.columns = df.columns.str.strip()
-    # Rename Subject heading
-    df = df.rename(columns={"Subject Code (e.g. SITXXX)": "Subject"})
-    # Standardise sit to SIT
-    df["Subject"] = df["Subject"].str.upper()
+    else:
+        pd.set_option("display.max_columns", 59)
+        # Ignore the third row of the csv file
+        df.drop(index=0, inplace=True)
+        # Strip away unnecessary newlines
+        df.columns = df.columns.str.replace("\n", "")
+        # Removes the Qualtrics gibberish using regex
+        df.columns = df.columns.str.replace(r"Qualtrics\.Survey.*", "", regex=True)
+        # Removes unneeded white spaces.
+        df.columns = df.columns.str.strip()
+        # Rename Subject heading
+        df = df.rename(columns={"Subject Code (e.g. SITXXX)": "Subject"})
+        # Standardise sit to SIT
+        df["Subject"] = df["Subject"].str.upper()
     return df
 
 
