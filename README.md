@@ -33,4 +33,4 @@ SleepDiaryCleaner analyses the CSV file taken from the sleep diary qualtrics, an
 
 ### Caveat
 
-When exporting to CSV, SleepDiaryCleaner will attempt to call upon SleepAnnotate Cleaning.R . Ensure that the said R script is located in the same directory as the SleepDiaryCleaner python script. Note that this feature is only tested on Windows. If you encounter any errors when SleepDiaryCleaner attempts to call upon the RScript.exe/RScript file, you will either have to edit the filepath that points to RScript in the Sleep_diary_main.py file, or run the SleepAnnotate Cleaning.R manually using RStudio.
+When exporting to CSV, SleepDiaryCleaner will attempt to call upon SleepAnnotate Cleaning.R . Ensure that the said R script is located in the same directory as the SleepDiaryCleaner python script. Note that this feature is only tested on Windows. If you encounter any errors when SleepDiaryCleaner attempts to call upon SleepAnnotate Cleaning.R, you will either have to edit the filepath that points to RScript.exe/RScript located in the Sleep_diary_main.py file, or run the SleepAnnotate Cleaning.R manually using RStudio.
