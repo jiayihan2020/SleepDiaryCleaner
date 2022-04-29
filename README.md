@@ -1,17 +1,14 @@
 # SleepDiaryCleaner
 
-SleepDiaryCleaner aims to extract Wake Time (WT), and Bed Time (BT) data from the raw CSV data obtained from Qualtrics. SleepDiaryCleaner will then export the extracted data to their respective suitable CSV files for further data analysis.
+SleepDiaryCleaner aims to extract Wake Time (WT), and Bed Time (BT) data from the raw CSV data obtained from Qualtrics with the help of the SleepAnnotate R script. The resultant CSV file can then be used for further data analysis.
 
 - [SleepDiaryCleaner](#sleepdiarycleaner)
-  - [PREREQUISITES](#prerequisites)
+  - [REQUIREMENTS](#requirements)
   - [SETTING UP AND USAGE](#setting-up-and-usage)
-  - [DATA EXTRACTION](#data-extraction)
-    - [Extracting WT Data](#extracting-wt-data)
-    - [Extracting BT Data](#extracting-bt-data)
+  - [HOW IT WORKS](#how-it-works)
+    - [CAVEAT](#caveat)
 
----
-
-## PREREQUISITES
+## REQUIREMENTS
 
 Ensure that you have the following software/external scripts when using this python script.
 
@@ -24,14 +21,12 @@ Ensure that you have the following software/external scripts when using this pyt
 
 ## SETTING UP AND USAGE
 
-Ensure that the SleepDiaryCleaner.py, main.py, and Step1_Cleaning modified.R reside in the same folder as the sleep diary csv. Open main.py using Python and run the file. To obtain the respective data, follow the onscreen instructions.
+Ensure that the SleepDiaryCleaner.py, main.py, and Step1_Cleaning modified.R reside in the same folder as the sleep diary csv. Open main.py using Python and run the file. To obtain the respective data, follow the on-screen instructions.
 
-## DATA EXTRACTION
+## HOW IT WORKS
 
-### Extracting WT Data
+SleepDiaryCleaner analyses the CSV file taken from the sleep diary qualtrics, and extract the relevant Sleep and Nap timings. SleepDiaryCleaner then automatically calls upon the SleepAnnotate Cleaning.R script to export the extracted data into another CSV file so that the data can be further analysed.
 
-The WT data extraction works out of the box. Simply enter your choice indicated by the onscreen instruction and the formatted file will be exported in the same directory.
+### CAVEAT
 
-### Extracting BT Data
-
-The BT extractor can only export BT Timestamped csv file with the help of the Step1_Cleaning modified.R script.
+When exporting to CSV, SleepDiaryCleaner will attempt to call upon SleepAnnotate Cleaning.R . Ensure that the said R script is located in the same directory as the SleepDiaryCleaner python script. Note that this feature is only tested on Windows. If you encounter any errors when SleepDiaryCleaner attempts to call upon the RScript.exe/RScript file, you will either have to edit the filepath that points to RScript in the main.py file, or run the SleepAnnotate Cleaning.R manually using RStudio.
