@@ -29,6 +29,10 @@ Ensure that the SleepDiaryCleaner.py, Sleep_diary_main.py, and Step1_Cleaning mo
 
 ## How It Works
 
+Sleep_diary_main.py: This script serves as the "user interface". User should use this script as it provides an interactive menu for ease of use, and also allows users to edit the filepath for the CSV files, and RScript.exe/RScript modules.
+
+SleepDiaryCleaner.py: This script is the main data extractor. It is not designed for end user's usage although this script can be customised.
+
 SleepDiaryCleaner analyses the CSV file taken from the sleep diary qualtrics, and extract the relevant Sleep and Nap timings. SleepDiaryCleaner then automatically calls upon the SleepAnnotate Cleaning.R script to export the extracted data into another CSV file so that the data can be further analysed.
 
 ### Caveat
