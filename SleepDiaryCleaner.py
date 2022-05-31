@@ -38,15 +38,40 @@ def obtaining_WT(sleep_diary_location):
         inplace=True,
     )
     df = df[["Subject", "WTSelectedDate", "Bedtime", "WakeTime"]]
-    df["WTSelectedDate"] = pd.to_datetime(df["WTSelectedDate"], format="%d/%m/%Y")
+    df["WTSelectedDate"] = pd.to_datetime(df["WTSelectedDate"], format="%d-%m-%Y")
+    if platform.system() == "Windows":
+        df["WTSelectedDate"] = pd.to_datetime(df["WTSelectedDate"]).dt.strftime(
+            "%#d/%#m/%Y"
+        )
+    else:
+
+        df["WTSelectedDate"] = pd.to_datetime(df["WTSelectedDate"]).dt.strftime(
+            "%-d/%-m/%Y"
+        )
     if platform.system() == "Windows":
         print("ERROR: Operation is not supported on Windows! Sorry!")
         quit()
     else:
-        df["Bedtime"] = pd.to_datetime(df["Bedtime"], format="%-H:%M")
-        df["Bedtime"] = pd.to_datetime(df["Bedtime"].dt.strftime("%#I:%M"))
+        df["Bedtime"] = pd.to_datetime(df["Bedtime"], format="%H:%M")
+        df["Bedtime"] = pd.to_datetime(df["Bedtime"]).dt.strftime("%-I:%M %p")
+        df[["Bedtime", "BedtimeAMPM"]] = df["Bedtime"].str.split(" ", 1, expand=True)
+        df["WakeTime"] = pd.to_datetime(df["WakeTime"], format="%H:%M")
+        df["WakeTime"] = pd.to_datetime(df["WakeTime"]).dt.strftime("%-I:%M %p")
+        df[["WakeTime", "WakeTimeAMPM"]] = df["WakeTime"].str.split(" ", 1, expand=True)
+        df = df[
+            [
+                "Subject",
+                "WTSelectedDate",
+                "Bedtime",
+                "BedtimeAMPM",
+                "WakeTime",
+                "WakeTimeAMPM",
+            ]
+        ]
+        df.loc[df["Subject"].duplicated(), "Subject"] = ""
+    df.to_csv("./WT2.csv", index=False, encoding="utf-8")
 
-    return df
+    return None
 
 
 obtaining_WT(sleep_diary_csv_raw)
