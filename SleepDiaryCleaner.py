@@ -40,9 +40,8 @@ def obtaining_WT(sleep_diary_location):
     df = df[["Subject", "WTSelectedDate", "Bedtime", "WakeTime"]]
     df["WTSelectedDate"] = pd.to_datetime(df["WTSelectedDate"], format="%d/%m/%Y")
     if platform.system() == "Windows":
-
-        df["Bedtime"] = pd.to_datetime(df["Bedtime"], format="%#H:%m")
-        df["Bedtime"] = pd.to_datetime(df["Bedtime"].dt.strftime("%#I:%M"))
+        print("ERROR: Operation is not supported on Windows! Sorry!")
+        quit()
     else:
         df["Bedtime"] = pd.to_datetime(df["Bedtime"], format="%-H:%M")
         df["Bedtime"] = pd.to_datetime(df["Bedtime"].dt.strftime("%#I:%M"))
