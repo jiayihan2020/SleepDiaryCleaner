@@ -1,6 +1,5 @@
 import pandas as pd
 import re
-import sys
 import platform
 
 # --- User Input ----
@@ -24,14 +23,11 @@ def opening_sleep_diary(sleep_diary_location):
     return df
 
 
-opening_sleep_diary(sleep_diary_csv_raw)
-
-
 def obtaining_WT(sleep_diary_location):
     df = opening_sleep_diary(sleep_diary_location)
     search_pattern = re.compile(r"Subject|^2\.|^4\.|5\.")
     df = df.filter(regex=search_pattern)
-    df.sort_values(by=["Subject", "4. Date at wake-time"], inplace=True)
+
     df.rename(
         columns={
             "4. Date at wake-time": "WTSelectedDate",
@@ -68,7 +64,6 @@ def obtaining_WT(sleep_diary_location):
                 "WakeTimeAMPM",
             ]
         ]
-        df.loc[df["Subject"].duplicated(), "Subject"] = ""
     else:
         df["Bedtime"] = pd.to_datetime(df["Bedtime"], format="%H:%M")
         df["Bedtime"] = pd.to_datetime(df["Bedtime"]).dt.strftime("%-I:%M %p")
@@ -86,8 +81,9 @@ def obtaining_WT(sleep_diary_location):
                 "WakeTimeAMPM",
             ]
         ]
-        df.loc[df["Subject"].duplicated(), "Subject"] = ""
-    df.to_csv("./WT2.csv", index=False, encoding="utf-8")
+    df.sort_values(by=["Subject", "WTSelectedDate"], inplace=True)
+    df.loc[df["Subject"].duplicated(), "Subject"] = ""
+    df.to_csv("./WT4.csv", index=False, encoding="utf-8")
 
     return None
 
@@ -130,7 +126,7 @@ def obtaining_BT(sleep_diary_location):
                 df[col] = pd.to_datetime(df[col]).dt.strftime("%#I:%M %p")
             else:
                 df[col] = pd.to_datetime(df[col]).dt.strftime("%-I:%M %p")
-    df.loc[df["Subject"].duplicated(), "Subject"] = ""
+    # df.loc[df["Subject"].duplicated(), "Subject"] = ""
 
     df.to_csv("./BT2.csv", index=False, encoding="utf-8")
 
