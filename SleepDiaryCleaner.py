@@ -83,7 +83,7 @@ def detect_spurious_datetime(sleep_diary_location):
                 / np.timedelta64(1, "h"),
                 2,
             )
-            > 14
+            > 12
         ):
             if row["Subject"] not in spurious_data:
                 spurious_data[row["Subject"]] = [(row["Bed Time"], row["Wake Time"])]
