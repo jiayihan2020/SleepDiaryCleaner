@@ -248,10 +248,10 @@ def exporting_to_csv_using_R(WT_CSV, BT_CSV):
                 break
             else:
                 print("Done!")
-        else:
-            print(
-                "Unknown OS detected. The script currently only supports Windows, macOS, and Linux."
-            )
+    else:
+        print(
+            "Unknown OS detected. The script currently only supports Windows, macOS, and Linux."
+        )
     return
 
 
