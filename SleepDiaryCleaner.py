@@ -3,6 +3,7 @@ import re
 import os
 import platform
 from subprocess import run
+import numpy as np
 
 # --- User Input ----
 
@@ -30,6 +31,70 @@ def opening_sleep_diary(sleep_diary_location):
     pd.set_option("display.max_columns", None)
 
     return df
+
+
+def detect_spurious_datetime(sleep_diary_location):
+    """Attempts to detect any potential inaccurate bedtime and wake time durations and flag those errors in a separate txt document"""
+
+    spurious_data = {}
+    df = opening_sleep_diary(sleep_diary_location)
+    df = df[
+        [
+            "Subject",
+            "1. Date at bedtime",
+            "2. Bedtime(24 hour format, e.g. 16:35) - HH:MM",
+            "4. Date at wake-time",
+            "5. Final wake time (24 hour format, e.g. 16:35) - HH:MM",
+        ]
+    ]
+    df.sort_values(by=["Subject"], inplace=True)
+
+    df["Bed Time"] = (
+        df["1. Date at bedtime"]
+        + " "
+        + df["2. Bedtime(24 hour format, e.g. 16:35) - HH:MM"]
+    )
+    df["Wake Time"] = (
+        df["4. Date at wake-time"]
+        + " "
+        + df["5. Final wake time (24 hour format, e.g. 16:35) - HH:MM"]
+    )
+
+    df = df.drop(df.columns[1:5], axis=1)
+
+    df["Bed Time"] = pd.to_datetime(df["Bed Time"], format="%d/%m/%Y %H:%M")
+    df["Wake Time"] = pd.to_datetime(df["Wake Time"], format="%d/%m/%Y %H:%M")
+
+    for (
+        index,
+        row,
+    ) in df.iterrows():
+
+        if (
+            round(
+                pd.Timedelta(row["Wake Time"] - row["Bed Time"])
+                / np.timedelta64(1, "h"),
+                2,
+            )
+            < 0
+        ) or (
+            round(
+                pd.Timedelta(row["Wake Time"] - row["Bed Time"])
+                / np.timedelta64(1, "h"),
+                2,
+            )
+            > 14
+        ):
+            if row["Subject"] not in spurious_data:
+                spurious_data[row["Subject"]] = [(row["Bed Time"], row["Wake Time"])]
+            else:
+                spurious_data[row["Subject"]] += [(row["Bed Time"], row["Wake Time"])]
+    if len(spurious_data) > 0:
+        with open("sussy datetime.txt", "w") as text_file:
+            for k in spurious_data.keys():
+                text_file.write(f"{k}: {spurious_data[k]}\n")
+
+    return spurious_data
 
 
 def obtaining_WT(sleep_diary_location):
@@ -190,5 +255,7 @@ def exporting_to_csv_using_R(WT_CSV, BT_CSV):
     return
 
 
-obtaining_BT(sleep_diary_csv_raw)
-obtaining_WT(sleep_diary_csv_raw)
+detect_spurious_datetime(sleep_diary_csv_raw)
+
+# obtaining_BT(sleep_diary_csv_raw)
+# obtaining_WT(sleep_diary_csv_raw)
