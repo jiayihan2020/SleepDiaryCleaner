@@ -1,11 +1,20 @@
 import pandas as pd
 import re
+import os
 import platform
+from subprocess import run
 
 # --- User Input ----
 
 working_directory = "./"
 sleep_diary_csv_raw = "SIT Diary_March 23, 2022_23.40.csv"
+
+exported_WT_csv = "./WT2.csv"
+exported_BT_csv = "./BT2.csv"
+R_interpreter_location_windows = (
+    "c:/Program Files/R/R-4.1.3/bin/Rscript.exe"  # Edit the filepath if required.
+)
+R_interpreter_location_UNIX = "/usr/bin/R"  # Edit the filepath if required.
 
 # --------------------
 
@@ -126,11 +135,59 @@ def obtaining_BT(sleep_diary_location):
                 df[col] = pd.to_datetime(df[col]).dt.strftime("%#I:%M %p")
             else:
                 df[col] = pd.to_datetime(df[col]).dt.strftime("%-I:%M %p")
-    # df.loc[df["Subject"].duplicated(), "Subject"] = ""
+    df.loc[df["Subject"].duplicated(), "Subject"] = ""
 
     df.to_csv("./BT2.csv", index=False, encoding="utf-8")
 
     return df
+
+
+def exporting_to_csv_using_R(WT_CSV, BT_CSV):
+    """Attempt to export the cruse csv file from preceding step to the version that can be parsed by SleepAnnotate R script."""
+    crude_csv = [WT_CSV, BT_CSV]
+    if not (os.path.isfile(WT_CSV) or os.path.isfile(BT_CSV)):
+        print(
+            "ERROR: Missing either the WT csv or the BT csv files.Please generate those files before proceeding!"
+        )
+        quit()
+
+    if platform.system() == "Windows":
+        for csv_file in crude_csv:
+            filename_only = csv_file.split("/")[-1]
+            try:
+                print(f"Exporting {filename_only}....")
+                run(
+                    [f"{R_interpreter_location_windows}", "--vanilla", f"{csv_file}"],
+                    shell=True,
+                )
+            except FileNotFoundError:
+                print(
+                    "ERROR: RScript.exe not found. Please ensure that R is installed. Make sure that the filepath for RScript.exe is also correct."
+                )
+                break
+            else:
+                print("Done!")
+    elif platform.system() == "Linux" or platform.system() == "Darwin":
+        for csv_file in crude_csv:
+            filename_only = csv_file.split("/")[-1]
+            try:
+                print(f"Exporting {filename_only}....")
+                run(
+                    [f"{R_interpreter_location_UNIX}", "--vanilla", f"{csv_file}"],
+                    shell=True,
+                )
+            except FileNotFoundError:
+                print(
+                    "ERROR: RScript.exe not found. Please ensure that R is installed. Make sure that the filepath for RScript.exe is also correct."
+                )
+                break
+            else:
+                print("Done!")
+        else:
+            print(
+                "Unknown OS detected. The script currently only supports Windows, macOS, and Linux."
+            )
+    return
 
 
 obtaining_BT(sleep_diary_csv_raw)
