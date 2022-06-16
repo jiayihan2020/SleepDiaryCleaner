@@ -8,7 +8,7 @@ import numpy as np
 # --- User Input ----
 
 working_directory = "./"
-sleep_diary_csv_raw = "SIT Diary_March 23, 2022_23.40.csv"
+sleep_diary_csv_raw = "SIT Diary_March 23, 2022_23.40 modded.csv"
 
 exported_WT_csv = "./WT2.csv"
 exported_BT_csv = "./BT2.csv"
@@ -47,7 +47,7 @@ def detect_spurious_datetime(sleep_diary_location):
             "5. Final wake time (24 hour format, e.g. 16:35) - HH:MM",
         ]
     ]
-    df.sort_values(by=["Subject"], inplace=True)
+    df.sort_values(by=["Subject", "1. Date at bedtime"], inplace=True)
 
     df["Bed Time"] = (
         df["1. Date at bedtime"]
@@ -76,7 +76,7 @@ def detect_spurious_datetime(sleep_diary_location):
                 / np.timedelta64(1, "h"),
                 2,
             )
-            < 0
+            <= 0
         ) or (
             round(
                 pd.Timedelta(row["Wake Time"] - row["Bed Time"])
@@ -157,7 +157,7 @@ def obtaining_WT(sleep_diary_location):
         ]
     df.sort_values(by=["Subject", "WTSelectedDate"], inplace=True)
     df.loc[df["Subject"].duplicated(), "Subject"] = ""
-    df.to_csv("./WT4.csv", index=False, encoding="utf-8")
+    df.to_csv(exported_WT_csv, index=False, encoding="utf-8")
 
     return None
 
@@ -202,7 +202,7 @@ def obtaining_BT(sleep_diary_location):
                 df[col] = pd.to_datetime(df[col]).dt.strftime("%-I:%M %p")
     df.loc[df["Subject"].duplicated(), "Subject"] = ""
 
-    df.to_csv("./BT2.csv", index=False, encoding="utf-8")
+    df.to_csv(exported_BT_csv, index=False, encoding="utf-8")
 
     return df
 
@@ -255,7 +255,18 @@ def exporting_to_csv_using_R(WT_CSV, BT_CSV):
     return
 
 
-detect_spurious_datetime(sleep_diary_csv_raw)
-
-# obtaining_BT(sleep_diary_csv_raw)
-# obtaining_WT(sleep_diary_csv_raw)
+if len(detect_spurious_datetime(sleep_diary_csv_raw)) > 0:
+    while True:
+        user_input = input(
+            "WARNING: Potential erroneous duration for bedtime-waketime detected. Refer to 'sussy datetime.txt' for more information. \nDo you wish to continue generating the cleaned up csv files for producing the SleepAnnotate actigraph? (Y/N)\n"
+        )
+        if user_input.casefold() == "y" or user_input.casefold() == "yes":
+            obtaining_BT(sleep_diary_csv_raw)
+            obtaining_WT(sleep_diary_csv_raw)
+            exporting_to_csv_using_R(exported_WT_csv, exported_BT_csv)
+            break
+        elif user_input.casefold() == "n" or user_input.casefold() == "no":
+            print("CSV files not generated.")
+            break
+        else:
+            print("SYNTAX ERROR: Please ensure that you reply with either 'y' or 'n'.")
