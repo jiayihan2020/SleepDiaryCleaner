@@ -10,8 +10,8 @@ import numpy as np
 working_directory = "./"
 sleep_diary_csv_raw = "SIT Diary_March 23, 2022_23.40 modded.csv"
 
-exported_WT_csv = "./WT2.csv"
-exported_BT_csv = "./BT2.csv"
+exported_WT_csv = "./ExampleData/WT2.csv"
+exported_BT_csv = "./ExampleData/BT2.csv"
 R_interpreter_location_windows = (
     "c:/Program Files/R/R-4.1.3/bin/Rscript.exe"  # Edit the filepath if required.
 )
