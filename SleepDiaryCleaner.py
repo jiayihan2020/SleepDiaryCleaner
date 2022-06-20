@@ -8,7 +8,7 @@ import numpy as np
 # --- User Input ----
 
 working_directory = "./"
-sleep_diary_csv_raw = "SIT Diary_March 23, 2022_23.40 modded.csv"
+sleep_diary_csv_raw = "SIT Diary_March 23, 2022_23.40 modded and highlighted.csv"
 
 exported_WT_csv = "./ExampleData/WT2.csv"
 exported_BT_csv = "./ExampleData/BT2.csv"
@@ -255,14 +255,14 @@ def exporting_to_csv_using_R(WT_CSV, BT_CSV):
     return
 
 
-if len(detect_spurious_datetime(sleep_diary_csv_raw)) > 0:
+if len(detect_spurious_datetime(working_directory + sleep_diary_csv_raw)) > 0:
     while True:
         user_input = input(
             "WARNING: Potential erroneous duration for bedtime-waketime detected. Refer to 'sussy datetime.txt' for more information. \nDo you wish to continue generating the cleaned up csv files for producing the SleepAnnotate actigraph? (Y/N)\n"
         )
         if user_input.casefold() == "y" or user_input.casefold() == "yes":
-            obtaining_BT(sleep_diary_csv_raw)
-            obtaining_WT(sleep_diary_csv_raw)
+            obtaining_BT(working_directory + sleep_diary_csv_raw)
+            obtaining_WT(working_directory + sleep_diary_csv_raw)
             exporting_to_csv_using_R(exported_WT_csv, exported_BT_csv)
             break
         elif user_input.casefold() == "n" or user_input.casefold() == "no":
