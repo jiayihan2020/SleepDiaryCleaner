@@ -1,9 +1,11 @@
+from sqlite3 import Timestamp
 import pandas as pd
 import re
 import os
 import platform
 from subprocess import run
 import numpy as np
+import json
 
 # --- User Input ----
 
@@ -86,13 +88,29 @@ def detect_spurious_datetime(sleep_diary_location):
             > 12
         ):
             if row["Subject"] not in spurious_data:
-                spurious_data[row["Subject"]] = [(row["Bed Time"], row["Wake Time"])]
+                spurious_data[row["Subject"]] = [
+                    row["Bed Time"].strftime("%d/%m/%Y %H:%M"),
+                    row["Wake Time"].strftime("%d/%m/%Y %H:%M"),
+                ]
             else:
-                spurious_data[row["Subject"]] += [(row["Bed Time"], row["Wake Time"])]
+                spurious_data[row["Subject"]] += [
+                    row["Bed Time"].strftime("%d/%m/%Y %H:%M"),
+                    row["Wake Time"].strftime("%d/%m/%Y %H:%M"),
+                ]
     if len(spurious_data) > 0:
-        with open("sussy datetime.txt", "w") as text_file:
-            for k in spurious_data.keys():
-                text_file.write(f"{k}: {spurious_data[k]}\n")
+
+        with open("sussy datetime.json", "w") as text_file:
+            json.dump(spurious_data, text_file)
+        with open("sussy datetime.json", "r") as sus:
+            sussy_json = json.load(sus)
+        for timestamp in sussy_json.values():
+            for index, time in enumerate(timestamp):
+                if index % 2 == 1:
+                    timestamp[index] = f"waketime{index} {time}"
+                elif index == 0 or index % 2 == 0:
+                    timestamp[index] = f"bedtime{index+1} {time}"
+        with open("sussy datetime 2.json", "w") as amigus:
+            json.dump(sussy_json, amigus)
 
     return spurious_data
 
