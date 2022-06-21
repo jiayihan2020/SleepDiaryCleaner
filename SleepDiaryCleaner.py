@@ -1,9 +1,8 @@
-from sqlite3 import Timestamp
 import pandas as pd
 import re
 import os
 import platform
-from subprocess import run
+import subprocess
 import numpy as np
 import json
 
@@ -12,13 +11,14 @@ import json
 working_directory = "./"
 sleep_diary_csv_raw = "SIT Diary_March 23, 2022_23.40 modded and highlighted.csv"
 
-exported_WT_csv = "./ExampleData/WT2.csv"
-exported_BT_csv = "./ExampleData/BT2.csv"
+exported_WT_csv = f"{working_directory}WT2.csv"
+exported_BT_csv = f"{working_directory}BT2.csv"
 R_interpreter_location_windows = (
     "c:/Program Files/R/R-4.1.3/bin/Rscript.exe"  # Edit the filepath if required.
 )
 R_interpreter_location_UNIX = "/usr/bin/R"  # Edit the filepath if required.
 
+Step1_Cleaning_Script = "Step1_Cleaning.R"
 # --------------------
 
 
@@ -103,12 +103,17 @@ def detect_spurious_datetime(sleep_diary_location):
             json.dump(spurious_data, text_file)
         with open("sussy datetime.json", "r") as sus:
             sussy_json = json.load(sus)
+
         for timestamp in sussy_json.values():
+            count = 0
             for index, time in enumerate(timestamp):
                 if index % 2 == 1:
-                    timestamp[index] = f"waketime{index} {time}"
+                    timestamp[index] = f"waketime{count +1} {time}"
+                    count += 1
+
                 elif index == 0 or index % 2 == 0:
-                    timestamp[index] = f"bedtime{index+1} {time}"
+                    timestamp[index] = f"bedtime{count+1} {time}"
+
         with open("sussy datetime 2.json", "w") as amigus:
             json.dump(sussy_json, amigus)
 
@@ -239,9 +244,14 @@ def exporting_to_csv_using_R(WT_CSV, BT_CSV):
             filename_only = csv_file.split("/")[-1]
             try:
                 print(f"Exporting {filename_only}....")
-                run(
-                    [f"{R_interpreter_location_windows}", "--vanilla", f"{csv_file}"],
-                    shell=True,
+                subprocess.Popen(
+                    [
+                        f"{R_interpreter_location_windows}",
+                        f"{working_directory}{Step1_Cleaning_Script}",
+                        "--vanilla",
+                        f"{csv_file}",
+                    ],
+                    stdout=subprocess.PIPE,
                 )
             except FileNotFoundError:
                 print(
@@ -255,17 +265,27 @@ def exporting_to_csv_using_R(WT_CSV, BT_CSV):
             filename_only = csv_file.split("/")[-1]
             try:
                 print(f"Exporting {filename_only}....")
-                run(
-                    [f"{R_interpreter_location_UNIX}", "--vanilla", f"{csv_file}"],
-                    shell=True,
+
+                result = subprocess.Popen(
+                    [
+                        f"{R_interpreter_location_UNIX}",
+                        f"{working_directory}{Step1_Cleaning_Script}",
+                        "--vanilla",
+                        f"{csv_file}",
+                    ],
+                    stdout=subprocess.PIPE,
                 )
+
+                output = result.communicate()
+
             except FileNotFoundError:
                 print(
-                    "ERROR: RScript.exe not found. Please ensure that R is installed. Make sure that the filepath for RScript.exe is also correct."
+                    "ERROR: RScript.exe not found. Please ensure that R is installed with administrative privileges. Make sure that the filepath for RScript.exe is also correct. If error cannot be resolved, run the Step1_Cleaning.R manually using RStudio."
                 )
                 break
             else:
-                print("Done!")
+                print(output)
+
     else:
         print(
             "Unknown OS detected. The script currently only supports Windows, macOS, and Linux."
@@ -280,6 +300,7 @@ if len(detect_spurious_datetime(working_directory + sleep_diary_csv_raw)) > 0:
         )
         if user_input.casefold() == "y" or user_input.casefold() == "yes":
             obtaining_BT(working_directory + sleep_diary_csv_raw)
+
             obtaining_WT(working_directory + sleep_diary_csv_raw)
             exporting_to_csv_using_R(exported_WT_csv, exported_BT_csv)
             break
