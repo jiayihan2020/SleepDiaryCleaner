@@ -127,6 +127,7 @@ def detect_spurious_datetime(sleep_diary_location):
 
 
 def obtaining_WT(sleep_diary_location):
+    """Extract the sleep-wake timing and export them to a crude csv file."""
     df = opening_sleep_diary(sleep_diary_location)
     search_pattern = re.compile(r"Subject|^2\.|^4\.|5\.")
     df = df.filter(regex=search_pattern)
@@ -192,6 +193,7 @@ def obtaining_WT(sleep_diary_location):
 
 
 def obtaining_BT(sleep_diary_location):
+    """Extract the nap timings and export them to a crude csv file."""
     df = opening_sleep_diary(sleep_diary_location)
     search_pattern = re.compile(r"Subject|^1\.|^7\w.")
     df = df.filter(regex=search_pattern)
