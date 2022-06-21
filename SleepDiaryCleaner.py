@@ -121,7 +121,7 @@ def detect_spurious_datetime(sleep_diary_location):
                     timestamp[index] = f"bedtime{count+1} {time}"
 
         with open("sussy datetime 2.json", "w") as amigus:
-            json.dump(sussy_json, amigus)
+            json.dump(sussy_json, amigus, indent=4)
 
     return spurious_data
 
