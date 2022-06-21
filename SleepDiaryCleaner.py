@@ -284,15 +284,13 @@ def exporting_to_csv_using_R(WT_CSV, BT_CSV):
                     stdout=subprocess.PIPE,
                 )
 
-                output = result.communicate()
-
             except FileNotFoundError:
                 print(
                     "ERROR: RScript.exe not found. Please ensure that R is installed with administrative privileges. Make sure that the filepath for RScript.exe is also correct. If error cannot be resolved, run the Step1_Cleaning.R manually using RStudio."
                 )
                 break
             else:
-                print(output)
+                print("Done")
 
     else:
         print(
