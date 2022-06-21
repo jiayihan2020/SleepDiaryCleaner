@@ -18,11 +18,17 @@ R_interpreter_location_windows = (
 )
 R_interpreter_location_UNIX = "/usr/bin/R"  # Edit the filepath if required.
 
-Step1_Cleaning_Script = "Step1_Cleaning.R"
+Step1_Cleaning_Script = (
+    "Step1_Cleaning.R"  # Edit the filepath for Step1_Cleaning.R if required.
+)
 # --------------------
 
 
 def opening_sleep_diary(sleep_diary_location):
+    """Clean up the column headers to produce a human readable/friendly format
+
+    Returns: modified pandas dataframe
+    """
     df = pd.read_csv(sleep_diary_location, index_col=False, skiprows=1)
     df.drop(index=0, inplace=True)
     df.columns = df.columns.str.replace("\n", "")
@@ -36,7 +42,7 @@ def opening_sleep_diary(sleep_diary_location):
 
 
 def detect_spurious_datetime(sleep_diary_location):
-    """Attempts to detect any potential inaccurate bedtime and wake time durations and flag those errors in a separate txt document"""
+    """Attempts to detect any potential inaccurate bedtime and wake time durations and flag those errors in a separate json file."""
 
     spurious_data = {}
     df = opening_sleep_diary(sleep_diary_location)
