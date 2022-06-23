@@ -302,7 +302,7 @@ def exporting_to_csv_using_R(WT_CSV, BT_CSV):
 if len(detect_spurious_datetime(working_directory + sleep_diary_csv_raw)) > 0:
     while True:
         user_input = input(
-            "WARNING: Potential erroneous duration for bedtime-waketime detected. Refer to 'sussy datetime.txt' for more information. \nDo you wish to continue generating the cleaned up csv files for producing the SleepAnnotate actigraph? (Y/N)\n"
+            "WARNING: Potential erroneous duration for bedtime-waketime detected. Refer to 'sussy datetime.txt' for more information. \n Inaccurate datetime may occur if you continue to generate the cleaned up csv. Do you wish to continue generating the csv files for producing the SleepAnnotate actigraph? (Y/N)\n"
         )
         if user_input.casefold() == "y" or user_input.casefold() == "yes":
             obtaining_BT(working_directory + sleep_diary_csv_raw)
