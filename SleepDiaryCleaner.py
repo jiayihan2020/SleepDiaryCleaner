@@ -315,3 +315,7 @@ if len(detect_spurious_datetime(working_directory + sleep_diary_csv_raw)) > 0:
             break
         else:
             print("SYNTAX ERROR: Please ensure that you reply with either 'y' or 'n'.")
+else:
+    obtaining_BT(working_directory + sleep_diary_csv_raw)
+    obtaining_WT(working_directory + sleep_diary_csv_raw)
+    exporting_to_csv_using_R(exported_WT_csv, exported_BT_csv)
