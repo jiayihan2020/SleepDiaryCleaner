@@ -104,24 +104,16 @@ def detect_spurious_datetime(sleep_diary_location):
                     row["Wake Time"].strftime("%d/%m/%Y %H:%M"),
                 ]
     if len(spurious_data) > 0:
-
-        with open("sussy datetime.json", "w") as text_file:
-            json.dump(spurious_data, text_file)
-        with open("sussy datetime.json", "r") as sus:
-            sussy_json = json.load(sus)
-
-        for timestamp in sussy_json.values():
+        for timestamp in spurious_data.values():
             count = 0
             for index, time in enumerate(timestamp):
-                if index % 2 == 1:
-                    timestamp[index] = f"waketime{count +1} {time}"
+                if index % 2 == 0 or index == 0:
+                    timestamp[index] = f"bedtime{count +1} {time}"
+                elif index % 2 == 1:
+                    timestamp[index] = f"waketime{count+1} {time}"
                     count += 1
-
-                elif index == 0 or index % 2 == 0:
-                    timestamp[index] = f"bedtime{count+1} {time}"
-
-        with open("sussy datetime 2.json", "w") as amigus:
-            json.dump(sussy_json, amigus, indent=4)
+        with open("sussy datetime.json", "w") as sus:
+            json.dump(spurious_data, sus, indent=4)
 
     return spurious_data
 
