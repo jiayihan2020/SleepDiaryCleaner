@@ -267,7 +267,7 @@ def exporting_to_csv_using_R(WT_CSV, BT_CSV):
             try:
                 print(f"Exporting {filename_only}....")
 
-                result = subprocess.Popen(
+                subprocess.Popen(
                     [
                         f"{R_interpreter_location_UNIX}",
                         f"{working_directory}{Step1_Cleaning_Script}",
