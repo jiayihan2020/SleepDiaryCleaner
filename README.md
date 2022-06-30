@@ -62,4 +62,4 @@ When exporting to CSV, SleepDiaryCleaner will attempt to call upon ```SleepAnnot
 1) An incorrect filepath was provided in the user input section of the `SleepDiaryCleaner.py`
 2) RScript.exe not installed/properly, possibly due to the lack of administrative privileges on the computer.
 
-For problem (1), ensure that the filepath is entered correctly in the `SleepDiaryCleaner.py`. For problem (2), try installing R again. If problem persists, contact your system administrator.
+For problem (1), ensure that the filepath is entered correctly in the `SleepDiaryCleaner.py`. For problem (2), try installing R again. If problem persists, run the R script manually using RStudio, contact your system administrator.
