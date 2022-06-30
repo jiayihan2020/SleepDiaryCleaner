@@ -103,7 +103,8 @@ def detect_spurious_datetime(sleep_diary_location):
                     row["Bed Time"].strftime("%d/%m/%Y %H:%M"),
                     row["Wake Time"].strftime("%d/%m/%Y %H:%M"),
                 ]
-    if len(spurious_data) > 0:
+    if spurious_data:
+
         for timestamp in spurious_data.values():
             count = 0
             for index, time in enumerate(timestamp):
@@ -291,7 +292,7 @@ def exporting_to_csv_using_R(WT_CSV, BT_CSV):
     return
 
 
-if len(detect_spurious_datetime(working_directory + sleep_diary_csv_raw)) > 0:
+if detect_spurious_datetime(working_directory + sleep_diary_csv_raw):
     while True:
         user_input = input(
             "WARNING: Potential erroneous duration for bedtime-waketime detected. Refer to 'sussy datetime.json' for more information. \n Inaccurate datetime may occur if you continue to generate the cleaned up csv. Do you wish to continue generating the csv files for producing the SleepAnnotate actigraph? (Y/N)\n"
