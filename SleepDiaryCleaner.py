@@ -1,5 +1,4 @@
 import pandas as pd
-import re
 import os
 import platform
 import subprocess
@@ -9,7 +8,7 @@ import json
 # --- User Input ----
 
 working_directory = "./"
-sleep_diary_csv_raw = "SIT Diary_March 23, 2022_23.40 modded and highlighted.csv"
+sleep_diary_csv_raw = "SIT Diary Tri 3 (LTLB only)_July 5, 2022_10.36.csv"
 
 exported_WT_csv = f"{working_directory}WT2.csv"
 exported_BT_csv = f"{working_directory}BT2.csv"
@@ -21,6 +20,7 @@ R_interpreter_location_UNIX = "/usr/bin/R"  # Edit the filepath if required.
 Step1_Cleaning_Script = (
     "Step1_Cleaning.R"  # Edit the filepath for Step1_Cleaning.R if required.
 )
+date_format = "%d/%m/%Y"
 # --------------------
 
 
@@ -31,8 +31,29 @@ def opening_sleep_diary(sleep_diary_location):
     """
     df = pd.read_csv(sleep_diary_location, index_col=False, skiprows=1)
     df.drop(index=0, inplace=True)
+    df.drop(columns=df.columns[:17], inplace=True)
     df.columns = df.columns.str.replace("\n", "")
     df.columns = df.columns.str.replace(r"Qualtrics\.Survey.*", "", regex=True)
+    df.rename(
+        columns={
+            df.columns[1]: "BTSelectedDate",
+            df.columns[2]: "Bedtime",
+            df.columns[4]: "WTSelectedDate",
+            df.columns[5]: "WakeTime",
+            df.columns[19]: "Naps",
+            df.columns[20]: "StartNap1",
+            df.columns[21]: "EndNap1",
+            df.columns[22]: "StartNap2",
+            df.columns[23]: "EndNap2",
+            df.columns[24]: "StartNap3",
+            df.columns[25]: "EndNap3",
+            df.columns[26]: "StartNap4",
+            df.columns[27]: "EndNap4",
+            df.columns[28]: "StartNap5",
+            df.columns[29]: "EndNap5",
+        },
+        inplace=True,
+    )
     df.columns = df.columns.str.strip()
     df = df.rename(columns={"Subject Code (e.g. SITXXX)": "Subject"})
     df["Subject"] = df["Subject"].str.upper()
@@ -46,32 +67,23 @@ def detect_spurious_datetime(sleep_diary_location):
 
     spurious_data = {}
     df = opening_sleep_diary(sleep_diary_location)
+    df.drop(columns=df.columns[6:], axis=1)
     df = df[
         [
             "Subject",
-            "1. Date at bedtime",
-            "2. Bedtime(24 hour format, e.g. 16:35) - HH:MM",
-            "4. Date at wake-time",
-            "5. Final wake time (24 hour format, e.g. 16:35) - HH:MM",
+            "BTSelectedDate",
+            "Bedtime",
+            "WTSelectedDate",
+            "WakeTime",
         ]
     ]
-    df.sort_values(by=["Subject", "1. Date at bedtime"], inplace=True)
+    df.sort_values(by=["Subject", "BTSelectedDate"], inplace=True)
 
-    df["Bed Time"] = (
-        df["1. Date at bedtime"]
-        + " "
-        + df["2. Bedtime(24 hour format, e.g. 16:35) - HH:MM"]
-    )
-    df["Wake Time"] = (
-        df["4. Date at wake-time"]
-        + " "
-        + df["5. Final wake time (24 hour format, e.g. 16:35) - HH:MM"]
-    )
+    df["Bed Time"] = df["BTSelectedDate"] + " " + df["Bedtime"]
+    df["Wake Time"] = df["WTSelectedDate"] + " " + df["WakeTime"]
 
-    df = df.drop(df.columns[1:5], axis=1)
-
-    df["Bed Time"] = pd.to_datetime(df["Bed Time"], format="%d/%m/%Y %H:%M")
-    df["Wake Time"] = pd.to_datetime(df["Wake Time"], format="%d/%m/%Y %H:%M")
+    df["Bed Time"] = pd.to_datetime(df["Bed Time"], format=f"{date_format} %H:%M")
+    df["Wake Time"] = pd.to_datetime(df["Wake Time"], format=f"{date_format} %H:%M")
 
     for (
         index,
@@ -109,9 +121,9 @@ def detect_spurious_datetime(sleep_diary_location):
             count = 0
             for index, time in enumerate(timestamp):
                 if index % 2 == 0 or index == 0:
-                    timestamp[index] = f"bedtime{count +1} {time}"
+                    timestamp[index] = f"BedTime{count +1} {time}"
                 elif index % 2 == 1:
-                    timestamp[index] = f"waketime{count+1} {time}"
+                    timestamp[index] = f"WakeTime{count+1} {time}"
                     count += 1
         with open("sussy datetime.json", "w") as sus:
             json.dump(spurious_data, sus, indent=4)
@@ -122,19 +134,8 @@ def detect_spurious_datetime(sleep_diary_location):
 def obtaining_WT(sleep_diary_location):
     """Extract the sleep-wake timing and export them to a crude csv file."""
     df = opening_sleep_diary(sleep_diary_location)
-    search_pattern = re.compile(r"Subject|^2\.|^4\.|5\.")
-    df = df.filter(regex=search_pattern)
-
-    df.rename(
-        columns={
-            "4. Date at wake-time": "WTSelectedDate",
-            "2. Bedtime(24 hour format, e.g. 16:35) - HH:MM": "Bedtime",
-            "5. Final wake time (24 hour format, e.g. 16:35) - HH:MM": "WakeTime",
-        },
-        inplace=True,
-    )
     df = df[["Subject", "WTSelectedDate", "Bedtime", "WakeTime"]]
-    df["WTSelectedDate"] = pd.to_datetime(df["WTSelectedDate"], format="%d/%m/%Y")
+    df["WTSelectedDate"] = pd.to_datetime(df["WTSelectedDate"], format=date_format)
     if platform.system() == "Windows":
         df["WTSelectedDate"] = pd.to_datetime(df["WTSelectedDate"]).dt.strftime(
             "%#d/%#m/%Y"
@@ -188,26 +189,8 @@ def obtaining_WT(sleep_diary_location):
 def obtaining_BT(sleep_diary_location):
     """Extract the nap timings and export them to a crude csv file."""
     df = opening_sleep_diary(sleep_diary_location)
-    search_pattern = re.compile(r"Subject|^1\.|^7\w.")
-    df = df.filter(regex=search_pattern)
-    df.rename(
-        columns={
-            df.columns[1]: "BTSelectedDate",
-            df.columns[2]: "Naps",
-            df.columns[3]: "StartNap1",
-            df.columns[4]: "EndNap1",
-            df.columns[5]: "StartNap2",
-            df.columns[6]: "EndNap2",
-            df.columns[7]: "StartNap3",
-            df.columns[8]: "EndNap3",
-            df.columns[9]: "StartNap4",
-            df.columns[10]: "EndNap4",
-            df.columns[11]: "StartNap5",
-            df.columns[12]: "EndNap5",
-        },
-        inplace=True,
-    )
-    df["BTSelectedDate"] = pd.to_datetime(df["BTSelectedDate"], format="%d/%m/%Y")
+
+    df["BTSelectedDate"] = pd.to_datetime(df["BTSelectedDate"], format=date_format)
     if platform.system() == "Windows":
         df["BTSelectedDate"] = pd.to_datetime(df["BTSelectedDate"]).dt.strftime(
             "%#d/%#m/%Y"
