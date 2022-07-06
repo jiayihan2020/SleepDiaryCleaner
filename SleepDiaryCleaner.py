@@ -36,6 +36,7 @@ def opening_sleep_diary(sleep_diary_location):
     df.columns = df.columns.str.replace(r"Qualtrics\.Survey.*", "", regex=True)
     df.rename(
         columns={
+            df.columns[0]: "Subject",
             df.columns[1]: "BTSelectedDate",
             df.columns[2]: "Bedtime",
             df.columns[4]: "WTSelectedDate",
@@ -55,7 +56,6 @@ def opening_sleep_diary(sleep_diary_location):
         inplace=True,
     )
     df.columns = df.columns.str.strip()
-    df = df.rename(columns={"Subject Code (e.g. SITXXX)": "Subject"})
     df["Subject"] = df["Subject"].str.upper()
     pd.set_option("display.max_columns", None)
 
