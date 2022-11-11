@@ -20,7 +20,7 @@ R_interpreter_location_UNIX = "/usr/bin/R"  # Edit the filepath if required.
 Step1_Cleaning_Script = (
     "Step1_Cleaning.R"  # Edit the filepath for Step1_Cleaning.R if required.
 )
-date_format = "%d/%m/%Y"
+date_format = "%d-%m-%Y"
 # --------------------
 
 
