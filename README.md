@@ -49,7 +49,7 @@ Launch the terminal and key in  the following command:
 
 Follow the on-screen instructions on the terminal.
 
-NOTE: This is not tested on macOS. Thus, feature may ot work as intended.
+NOTE: This is not tested on macOS. Thus, feature may not work as intended.
 
 ## How It Works
 
