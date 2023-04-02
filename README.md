@@ -1,6 +1,6 @@
 # SleepDiaryCleaner
 
-SleepDiaryCleaner aims to extract Wake Time (WT), and Bed Time (BT) data from the raw CSV data obtained from Qualtrics with the help of the SleepAnnotate R script. The resultant CSV file can then be used for further data analysis.
+SleepDiaryCleaner aims to extract Wake Time (WT), and Bed Time (BT) data from the raw CSV data obtained from Qualtrics with the help of the [SleepAnnotate](https://github.com/YngMiinLoke/SleepAnnotate) R script. The resultant CSV file can then be used for further data analysis.
 
 - [SleepDiaryCleaner](#sleepdiarycleaner)
   - [Requirements](#requirements)
@@ -49,7 +49,7 @@ Launch the terminal and key in  the following command:
 
 Follow the on-screen instructions on the terminal.
 
-NOTE: This is not tested on macOS. Thus, feature may ot work as intended.
+NOTE: This is not tested on macOS. Thus, feature may not work as intended.
 
 ## How It Works
 
